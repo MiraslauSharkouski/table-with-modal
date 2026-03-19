@@ -6,7 +6,10 @@ export { default as TableActions } from "./components/TableActions";
 
 export { useEntityData } from "./hooks/useEntityData";
 export { useTypedSort } from "./hooks/useTypedSort";
-export { useDebouncedSearch } from "./hooks/useDebouncedSearch";
+export {
+  useDebouncedSearch,
+  useDebouncedSearchWithCallback,
+} from "./hooks/useDebouncedSearch";
 
 export type {
   EntityItem,
@@ -23,5 +26,9 @@ export { createMockEntityService } from "./services/entityService";
 export { createColumns } from "./components/columns";
 export { getTypedSorter } from "./utils/sorters";
 
-export { searchEntities } from "./utils/search";
+export {
+  searchEntities,
+  searchEntitiesMultiTerm,
+  matchesSearch,
+} from "./utils/search";
 export { validateEntityForm, sanitizeEntityData } from "./utils/validation";

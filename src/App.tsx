@@ -16,15 +16,15 @@ function App() {
   const { entities, loading, createEntity, updateEntity, deleteEntity } =
     useEntityData();
   const { sortField, sortOrder, handleTableChange } = useTypedSort();
-  const [searchTerm, setSearchTerm] = useState("");
+
+  // Debounced search with 300ms delay
+  const [debouncedSearchTerm, setSearchTerm] = useDebouncedSearch("", 300);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEntity, setEditingEntity] = useState<EntityItem | null>(null);
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchTerm(value);
-  }, []);
-
-  const filteredEntities = searchEntities(entities, searchTerm);
+  // Filter entities using debounced search term
+  const filteredEntities = searchEntities(entities, debouncedSearchTerm);
 
   const handleAddNew = useCallback(() => {
     setEditingEntity(null);
@@ -60,13 +60,18 @@ function App() {
     setEditingEntity(null);
   }, []);
 
+  const handleClear = useCallback(() => {
+    setSearchTerm("");
+  }, [setSearchTerm]);
+
   return (
     <div style={{ padding: 24 }}>
       <h1>Entity Table</h1>
       <TableActions onAddNew={handleAddNew} loading={loading} />
       <SearchBar
-        onSearch={handleSearch}
-        value={searchTerm}
+        onSearch={setSearchTerm}
+        onClear={handleClear}
+        value={debouncedSearchTerm}
         placeholder="Search entities..."
       />
       <EntityTable
