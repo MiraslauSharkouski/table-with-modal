@@ -77,8 +77,8 @@ describe("EntityTable", () => {
       />,
     );
 
-    const editButtons = screen.getAllByText("Edit");
-    fireEvent.click(editButtons[0]);
+    const editButton = screen.getByText("Edit");
+    fireEvent.click(editButton!);
 
     expect(onEdit).toHaveBeenCalledWith(mockEntities[0]);
     expect(onEdit).toHaveBeenCalledTimes(1);
@@ -96,10 +96,10 @@ describe("EntityTable", () => {
       />,
     );
 
-    const deleteButtons = screen.getAllByText("Delete");
-    fireEvent.click(deleteButtons[0]);
+    const deleteButton = screen.getByText("Delete");
+    fireEvent.click(deleteButton!);
 
-    expect(onDelete).toHaveBeenCalledWith(mockEntities[0].id);
+    expect(onDelete).toHaveBeenCalledWith(mockEntities[0]!.id);
     expect(onDelete).toHaveBeenCalledTimes(1);
   });
 

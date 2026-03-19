@@ -138,7 +138,6 @@ describe("Accessibility (a11y) Tests", () => {
     it("has keyboard accessible form", async () => {
       const onSubmit = vi.fn();
       const onCancel = vi.fn();
-      const user = userEvent.setup();
 
       render(
         <EntityFormModal open={true} onSubmit={onSubmit} onCancel={onCancel} />,

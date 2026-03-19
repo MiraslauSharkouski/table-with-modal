@@ -1,5 +1,6 @@
-import { ReactElement } from "react";
-import { render, RenderOptions } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { render } from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
 import { ConfigProvider } from "antd";
 
 interface AllTheProvidersProps {
@@ -7,14 +8,13 @@ interface AllTheProvidersProps {
 }
 
 function AllTheProviders({ children }: AllTheProvidersProps) {
-  return (
-    <ConfigProvider>
-      {children}
-    </ConfigProvider>
-  );
+  return <ConfigProvider>{children}</ConfigProvider>;
 }
 
-function customRender(ui: ReactElement, options?: Omit<RenderOptions, "wrapper">) {
+function customRender(
+  ui: ReactElement,
+  options?: Omit<RenderOptions, "wrapper">,
+) {
   return render(ui, { wrapper: AllTheProviders, ...options });
 }
 
