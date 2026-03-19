@@ -7,6 +7,9 @@ import path from "path";
 export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  optimizeDeps: {
+    include: ["antd", "lodash-es"],
+  },
   build: {
     sourcemap: true,
   },
