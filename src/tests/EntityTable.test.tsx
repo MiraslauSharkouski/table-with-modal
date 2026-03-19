@@ -64,7 +64,7 @@ describe("EntityTable", () => {
 
     // Check for Ant Design spinner via aria-busy attribute
     expect(
-      screen.getByRole("table").closest("[aria-busy='true']"),
+      screen.getByRole("table").closest("[aria-busy='true']")!,
     ).toBeInTheDocument();
   });
 
@@ -81,7 +81,7 @@ describe("EntityTable", () => {
     );
 
     const editButtons = screen.getAllByText("Edit");
-    fireEvent.click(editButtons[0]);
+    fireEvent.click(editButtons[0]!);
 
     expect(onEdit).toHaveBeenCalledWith(mockEntities[0]);
     expect(onEdit).toHaveBeenCalledTimes(1);
@@ -100,7 +100,7 @@ describe("EntityTable", () => {
     );
 
     const deleteButtons = screen.getAllByText("Delete");
-    fireEvent.click(deleteButtons[0]);
+    fireEvent.click(deleteButtons[0]!);
 
     expect(onDelete).toHaveBeenCalledWith(mockEntities[0]!.id);
     expect(onDelete).toHaveBeenCalledTimes(1);
@@ -175,6 +175,6 @@ describe("EntityTable", () => {
     const dates = screen.getAllByText(/2023/);
     expect(dates.length).toBeGreaterThan(0);
     // Check that the first date contains the expected year
-    expect(dates[0].textContent).toMatch(/2023/);
+    expect(dates[0]!.textContent).toMatch(/2023/);
   });
 });
