@@ -1,42 +1,59 @@
-import type { EntityFormData } from "../types/entity";
+import type { EntityFormValues, FormErrors } from "../types/entity";
+import { entityFormSchema } from "../types/entity";
 
 /**
- * Validation utilities for entity forms
+ * Validation utilities for entity forms using Zod
  */
 export const validateEntityForm = (
-  formData: EntityFormData,
-): { isValid: boolean; errors?: Record<string, string> } => {
-  const errors: Record<string, string> = {};
+  formData: EntityFormValues,
+): { isValid: boolean; errors?: FormErrors } => {
+  const result = entityFormSchema.safeParse(formData);
 
-  if (!formData.name || formData.name.trim().length === 0) {
-    errors.name = "Name is required";
-  } else if (formData.name.length > 100) {
-    errors.name = "Name must be less than 100 characters";
+  if (!result.success) {
+    const errors: Partial<FormErrors> = {};
+    result.error.errors.forEach((err) => {
+      const field = err.path[0] as keyof EntityFormValues;
+      errors[field] = err.message;
+    });
+    return { isValid: false, errors: errors as FormErrors };
   }
 
-  if (!formData.description || formData.description.trim().length === 0) {
-    // Description is optional, so we won't add an error here
-  } else if (formData.description.length > 500) {
-    errors.description = "Description must be less than 500 characters";
-  }
-
-  if (!formData.status) {
-    errors.status = "Status is required";
-  }
-
-  const isValid = Object.keys(errors).length === 0;
-  return { isValid, ...(isValid ? {} : { errors }) };
+  return { isValid: true };
 };
 
 /**
  * Sanitizes form data before submission
  */
 export const sanitizeEntityData = (
-  formData: EntityFormData,
-): EntityFormData => {
+  formData: EntityFormValues,
+): EntityFormValues => {
   return {
+    id: formData.id,
     name: formData.name.trim(),
-    description: formData.description ? formData.description.trim() : "",
-    status: formData.status,
+    date: formData.date,
+    value: Number(formData.value),
+  };
+};
+
+/**
+ * Validates form data using Zod and returns typed errors
+ */
+export const getFormErrors = (formData: EntityFormValues): FormErrors => {
+  const result = entityFormSchema.safeParse(formData);
+
+  if (!result.success) {
+    const errors: Partial<FormErrors> = {};
+    result.error.errors.forEach((err) => {
+      const field = err.path[0] as keyof EntityFormValues;
+      errors[field] = err.message;
+    });
+    return errors as FormErrors;
+  }
+
+  return {
+    id: undefined,
+    name: undefined,
+    date: undefined,
+    value: undefined,
   };
 };

@@ -1,13 +1,13 @@
-import type { Entity } from "../types/entity";
+import type { EntityItem } from "../types/entity";
 
 /**
  * Utility functions for searching entities
  */
 
 export const searchEntities = (
-  entities: Entity[],
+  entities: EntityItem[],
   searchTerm: string,
-): Entity[] => {
+): EntityItem[] => {
   if (!searchTerm) return entities;
 
   const term = searchTerm.toLowerCase().trim();
@@ -16,7 +16,7 @@ export const searchEntities = (
     (entity) =>
       entity.id.toLowerCase().includes(term) ||
       entity.name.toLowerCase().includes(term) ||
-      (entity.description && entity.description.toLowerCase().includes(term)) ||
-      (entity.status && entity.status.toLowerCase().includes(term)),
+      entity.date.toLowerCase().includes(term) ||
+      String(entity.value).includes(term),
   );
 };

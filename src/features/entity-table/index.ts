@@ -8,7 +8,14 @@ export { useEntityData } from "./hooks/useEntityData";
 export { useTypedSort } from "./hooks/useTypedSort";
 export { useDebouncedSearch } from "./hooks/useDebouncedSearch";
 
-export type { Entity, EntityFormData } from "./types/entity";
+export type {
+  EntityItem,
+  EntityFormValues,
+  FormErrors,
+  EntityField,
+  SortOrder,
+} from "./types/entity";
+export { entityFormSchema } from "./types/entity";
 
 export { searchEntities } from "./utils/search";
 export { validateEntityForm, sanitizeEntityData } from "./utils/validation";

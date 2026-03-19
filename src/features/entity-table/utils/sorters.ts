@@ -1,12 +1,12 @@
-import type { Entity } from "../types/entity";
+import type { EntityItem, EntityField } from "../types/entity";
 
 /**
  * Utility functions for sorting entities
  */
 
 export const sortByName = (
-  a: Entity,
-  b: Entity,
+  a: EntityItem,
+  b: EntityItem,
   order: "asc" | "desc" = "asc",
 ): number => {
   const comparison = a.name.localeCompare(b.name);
@@ -14,39 +14,50 @@ export const sortByName = (
 };
 
 export const sortByDate = (
-  a: Entity,
-  b: Entity,
-  field: keyof Entity,
+  a: EntityItem,
+  b: EntityItem,
   order: "asc" | "desc" = "asc",
 ): number => {
-  const dateA = new Date(a[field] as string | Date).getTime();
-  const dateB = new Date(b[field] as string | Date).getTime();
+  const dateA = new Date(a.date).getTime();
+  const dateB = new Date(b.date).getTime();
   const comparison = dateA - dateB;
   return order === "asc" ? comparison : -comparison;
 };
 
 export const sortById = (
-  a: Entity,
-  b: Entity,
+  a: EntityItem,
+  b: EntityItem,
   order: "asc" | "desc" = "asc",
 ): number => {
   const comparison = a.id.localeCompare(b.id);
   return order === "asc" ? comparison : -comparison;
 };
 
-export const sortByStatus = (
-  a: Entity,
-  b: Entity,
+export const sortByValue = (
+  a: EntityItem,
+  b: EntityItem,
   order: "asc" | "desc" = "asc",
 ): number => {
-  const statusOrder = {
-    active: 1,
-    pending: 2,
-    inactive: 3,
-  };
+  const comparison = a.value - b.value;
+  return order === "asc" ? comparison : -comparison;
+};
 
-  const comparison =
-    (statusOrder[a.status || "active"] || 4) -
-    (statusOrder[b.status || "active"] || 4);
+/**
+ * Generic sorter for any entity field
+ */
+export const sortByField = (
+  a: EntityItem,
+  b: EntityItem,
+  field: EntityField,
+  order: "asc" | "desc" = "asc",
+): number => {
+  let comparison = 0;
+
+  if (field === "value") {
+    comparison = a.value - b.value;
+  } else {
+    comparison = String(a[field]).localeCompare(String(b[field]));
+  }
+
   return order === "asc" ? comparison : -comparison;
 };

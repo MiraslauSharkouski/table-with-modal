@@ -1,51 +1,41 @@
 import { useState, useEffect } from "react";
-import type { Entity } from "../types/entity";
+import type { EntityItem } from "../types/entity";
 
 // Mock API service - in real app this would be an actual API call
 const mockApiService = {
-  getAll: (): Promise<Entity[]> => {
+  getAll: (): Promise<EntityItem[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
           {
-            id: "1",
+            id: crypto.randomUUID(),
             name: "Entity 1",
-            description: "First test entity",
-            createdAt: new Date("2023-01-15"),
-            updatedAt: new Date("2023-01-20"),
-            status: "active",
+            date: new Date("2023-01-15").toISOString(),
+            value: 100,
           },
           {
-            id: "2",
+            id: crypto.randomUUID(),
             name: "Entity 2",
-            description: "Second test entity",
-            createdAt: new Date("2023-02-10"),
-            updatedAt: new Date("2023-02-15"),
-            status: "inactive",
+            date: new Date("2023-02-10").toISOString(),
+            value: 200,
           },
           {
-            id: "3",
+            id: crypto.randomUUID(),
             name: "Entity 3",
-            description: "Third test entity",
-            createdAt: new Date("2023-03-05"),
-            updatedAt: new Date("2023-03-10"),
-            status: "pending",
+            date: new Date("2023-03-05").toISOString(),
+            value: 150,
           },
         ]);
       }, 500);
     });
   },
 
-  create: (
-    data: Omit<Entity, "id" | "createdAt" | "updatedAt">,
-  ): Promise<Entity> => {
+  create: (data: Omit<EntityItem, "id">): Promise<EntityItem> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
-          id: `${Date.now()}`,
+          id: crypto.randomUUID(),
           ...data,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         });
       }, 500);
     });
@@ -53,17 +43,15 @@ const mockApiService = {
 
   update: (
     id: string,
-    data: Partial<Omit<Entity, "id" | "createdAt">>,
-  ): Promise<Entity> => {
+    data: Partial<Omit<EntityItem, "id">>,
+  ): Promise<EntityItem> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
           id,
-          name: data.name || "Updated Entity",
-          description: data.description || "",
-          createdAt: new Date("2023-01-15"),
-          updatedAt: new Date(),
-          status: data.status || "active",
+          name: data.name ?? "Updated Entity",
+          date: data.date ?? new Date().toISOString(),
+          value: data.value ?? 0,
         });
       }, 500);
     });
@@ -79,7 +67,7 @@ const mockApiService = {
 };
 
 export const useEntityData = () => {
-  const [entities, setEntities] = useState<Entity[]>([]);
+  const [entities, setEntities] = useState<EntityItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,9 +85,7 @@ export const useEntityData = () => {
     }
   };
 
-  const createEntity = async (
-    data: Omit<Entity, "id" | "createdAt" | "updatedAt">,
-  ) => {
+  const createEntity = async (data: Omit<EntityItem, "id">) => {
     try {
       setLoading(true);
       const newEntity = await mockApiService.create(data);
@@ -117,7 +103,7 @@ export const useEntityData = () => {
 
   const updateEntity = async (
     id: string,
-    data: Partial<Omit<Entity, "id" | "createdAt">>,
+    data: Partial<Omit<EntityItem, "id">>,
   ) => {
     try {
       setLoading(true);
