@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { Table, Button } from "antd";
 import type { TablePaginationConfig } from "antd/es/table";
 import type { SorterResult } from "antd/es/table/interface";
@@ -32,7 +33,11 @@ const EntityTable = ({
   sortOrder,
   pagination = false,
 }: EntityTableProps) => {
-  const columns = createColumns(onEdit, onDelete);
+  // Memoize columns to prevent re-creation on every render
+  const columns = useMemo(
+    () => createColumns(onEdit, onDelete),
+    [onEdit, onDelete],
+  );
 
   return (
     <div>
@@ -56,4 +61,4 @@ const EntityTable = ({
   );
 };
 
-export default EntityTable;
+export default memo(EntityTable);
