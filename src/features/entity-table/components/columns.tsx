@@ -53,6 +53,7 @@ export const createColumns = (
           type="link"
           icon={<EditOutlined />}
           onClick={() => onEdit(record)}
+          className="p-0"
         >
           Edit
         </Button>
@@ -61,6 +62,7 @@ export const createColumns = (
           danger
           icon={<DeleteOutlined />}
           onClick={() => onDelete(record.id)}
+          className="p-0"
         >
           Delete
         </Button>

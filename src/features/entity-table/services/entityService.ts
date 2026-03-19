@@ -1,5 +1,7 @@
 import type { EntityItem } from "../types/entity";
 
+const STORAGE_KEY = "entity-table-data";
+
 /**
  * Интерфейс сервиса для CRUD-операций с сущностями
  */
@@ -14,36 +16,51 @@ export interface EntityService {
 }
 
 /**
- * Мок-реализация EntityService без сохранения данных (данные сбрасываются при перезагрузке)
+ * Мок-реализация EntityService с localStorage для сохранения данных
  */
 export const createMockEntityService = (): EntityService => {
-  // Храним данные только в памяти (сбрасываются при перезагрузке страницы)
-  let entities: EntityItem[] = [
-    {
-      id: "1",
-      name: "Entity 1",
-      date: new Date("2023-01-15").toISOString(),
-      value: 100,
-    },
-    {
-      id: "2",
-      name: "Entity 2",
-      date: new Date("2023-02-10").toISOString(),
-      value: 200,
-    },
-    {
-      id: "3",
-      name: "Entity 3",
-      date: new Date("2023-03-05").toISOString(),
-      value: 150,
-    },
-  ];
+  // Инициализируем данные из localStorage или создаём демо-данные
+  const getStoredEntities = (): EntityItem[] => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error("Failed to parse stored entities:", e);
+      }
+    }
+    // Демо-данные по умолчанию
+    return [
+      {
+        id: "1",
+        name: "Entity 1",
+        date: new Date("2023-01-15").toISOString(),
+        value: 100,
+      },
+      {
+        id: "2",
+        name: "Entity 2",
+        date: new Date("2023-02-10").toISOString(),
+        value: 200,
+      },
+      {
+        id: "3",
+        name: "Entity 3",
+        date: new Date("2023-03-05").toISOString(),
+        value: 150,
+      },
+    ];
+  };
+
+  const saveEntities = (entities: EntityItem[]) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entities));
+  };
 
   return {
     getAll: (): Promise<EntityItem[]> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve([...entities]);
+          resolve(getStoredEntities());
         }, 500);
       });
     },
@@ -51,11 +68,13 @@ export const createMockEntityService = (): EntityService => {
     create: (data: Omit<EntityItem, "id">): Promise<EntityItem> => {
       return new Promise((resolve) => {
         setTimeout(() => {
+          const entities = getStoredEntities();
           const newEntity: EntityItem = {
             id: crypto.randomUUID(),
             ...data,
           };
           entities.push(newEntity);
+          saveEntities(entities);
           resolve(newEntity);
         }, 500);
       });
@@ -67,10 +86,19 @@ export const createMockEntityService = (): EntityService => {
     ): Promise<EntityItem> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          const index = entities.findIndex((e) => e.id === id);
-          if (index !== -1) {
-            entities[index] = { ...entities[index], ...data };
-            resolve(entities[index]);
+          const entities = getStoredEntities();
+          const entity = entities.find((e) => e.id === id);
+          if (entity) {
+            const updatedEntity: EntityItem = {
+              id: entity.id,
+              name: data.name ?? entity.name,
+              date: data.date ?? entity.date,
+              value: data.value ?? entity.value,
+            };
+            const index = entities.findIndex((e) => e.id === id);
+            entities[index] = updatedEntity;
+            saveEntities(entities);
+            resolve(updatedEntity);
           } else {
             resolve({
               id,
@@ -86,7 +114,9 @@ export const createMockEntityService = (): EntityService => {
     delete: (id: string): Promise<void> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          entities = entities.filter((e) => e.id !== id);
+          const entities = getStoredEntities();
+          const filtered = entities.filter((e) => e.id !== id);
+          saveEntities(filtered);
           resolve();
         }, 500);
       });

@@ -11,7 +11,7 @@ export const validateEntityForm = (
 
   if (!result.success) {
     const errors: Partial<FormErrors> = {};
-    result.error.errors.forEach((err) => {
+    result.error.issues.forEach((err) => {
       const field = err.path[0] as keyof EntityFormValues;
       errors[field] = err.message;
     });
@@ -43,7 +43,7 @@ export const getFormErrors = (formData: EntityFormValues): FormErrors => {
 
   if (!result.success) {
     const errors: Partial<FormErrors> = {};
-    result.error.errors.forEach((err) => {
+    result.error.issues.forEach((err) => {
       const field = err.path[0] as keyof EntityFormValues;
       errors[field] = err.message;
     });

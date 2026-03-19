@@ -26,9 +26,5 @@ export { createMockEntityService } from "./services/entityService";
 export { createColumns } from "./components/columns";
 export { getTypedSorter } from "./utils/sorters";
 
-export {
-  searchEntities,
-  searchEntitiesMultiTerm,
-  matchesSearch,
-} from "./utils/search";
+export { searchEntities, matchesSearch } from "./utils/search";
 export { validateEntityForm, sanitizeEntityData } from "./utils/validation";

@@ -10,10 +10,10 @@ export const useTypedSort = () => {
 
   const handleTableChange = useCallback(
     (
-      pagination: any,
-      filters: any,
+      _pagination: any,
+      _filters: any,
       sorter: SorterResult<EntityItem> | SorterResult<EntityItem>[],
-      extra?: any,
+      _extra?: any,
     ) => {
       const actualSorter = Array.isArray(sorter) ? sorter[0] : sorter;
       if (actualSorter) {

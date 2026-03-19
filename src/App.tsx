@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { App as AntdApp } from "antd";
+import dayjs from "dayjs";
 import {
   EntityTable,
   EntityFormModal,
@@ -17,16 +18,19 @@ function AppContent() {
   const { modal } = AntdApp.useApp();
   const { entities, loading, createEntity, updateEntity, deleteEntity } =
     useEntityData();
-  const { sortField, sortOrder, handleTableChange } = useTypedSort();
+  const { handleTableChange } = useTypedSort();
 
-  // Debounced search with 150ms delay for faster response
+  // Debounced search with 20ms delay for faster response
   const [debouncedSearchTerm, setSearchTerm] = useDebouncedSearch("", 20);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntity, setEditingEntity] = useState<EntityItem | null>(null);
 
-  // Filter entities using debounced search term
-  const filteredEntities = searchEntities(entities, debouncedSearchTerm);
+  // Memoize filtered entities to prevent unnecessary re-calculations
+  const filteredEntities = useMemo(
+    () => searchEntities(entities, debouncedSearchTerm),
+    [entities, debouncedSearchTerm],
+  );
 
   const handleAddNew = useCallback(() => {
     setEditingEntity(null);
@@ -54,10 +58,16 @@ function AppContent() {
 
   const handleSubmit = useCallback(
     async (data: EntityFormValues) => {
+      // Convert Dayjs date to ISO string if needed
+      const payload = {
+        ...data,
+        date: dayjs.isDayjs(data.date) ? data.date.toISOString() : data.date,
+      };
+
       if (editingEntity) {
-        await updateEntity(editingEntity.id, data);
+        await updateEntity(editingEntity.id, payload);
       } else {
-        await createEntity(data);
+        await createEntity(payload);
       }
       setModalOpen(false);
       setEditingEntity(null);
@@ -90,8 +100,6 @@ function AppContent() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onChange={handleTableChange}
-        sortField={sortField}
-        sortOrder={sortOrder}
       />
       <EntityFormModal
         open={modalOpen}

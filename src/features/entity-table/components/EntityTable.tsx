@@ -2,7 +2,7 @@ import { memo, useMemo } from "react";
 import { Table, Button } from "antd";
 import type { TablePaginationConfig } from "antd/es/table";
 import type { SorterResult } from "antd/es/table/interface";
-import type { EntityItem, SortOrder } from "../types/entity";
+import type { EntityItem } from "../types/entity";
 import { createColumns } from "./columns";
 
 interface EntityTableProps {
@@ -17,8 +17,6 @@ interface EntityTableProps {
     sorter: SorterResult<EntityItem> | SorterResult<EntityItem>[],
     extra?: any,
   ) => void;
-  sortField?: keyof EntityItem | undefined;
-  sortOrder?: SortOrder;
   pagination?: TablePaginationConfig | false;
 }
 
@@ -29,8 +27,6 @@ const EntityTable = ({
   onDelete,
   onAddNew,
   onChange = () => {},
-  sortField,
-  sortOrder,
   pagination = false,
 }: EntityTableProps) => {
   // Memoize columns to prevent re-creation on every render

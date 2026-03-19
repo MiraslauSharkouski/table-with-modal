@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Dayjs } from "dayjs";
 
 /**
  * Базовый тип сущности для таблицы
@@ -12,8 +13,12 @@ export interface EntityItem {
 
 /**
  * Тип для формы создания/редактирования сущности
+ * date может быть Dayjs для формы или string для API
  */
-export type EntityFormValues = Omit<EntityItem, "id"> & { id?: string };
+export type EntityFormValues = Omit<EntityItem, "date"> & {
+  id?: string;
+  date: string | Dayjs;
+};
 
 /**
  * Тип для ошибок валидации формы
@@ -29,12 +34,17 @@ export const entityFormSchema = z.object({
     .string()
     .min(1, { message: "Name is required" })
     .max(100, { message: "Name must be less than 100 characters" }),
-  date: z
-    .string()
-    .min(1, { message: "Date is required" })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date format",
+  date: z.union([
+    z
+      .string()
+      .min(1, { message: "Date is required" })
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Invalid date format",
+      }),
+    z.object({
+      toISOString: z.function(),
     }),
+  ]),
   value: z
     .number({ message: "Value is required" })
     .min(0, { message: "Value must be positive" }),

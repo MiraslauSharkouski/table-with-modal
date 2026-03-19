@@ -46,10 +46,13 @@ const EntityFormModal = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      const dateValue = dayjs.isDayjs(values.date)
+        ? values.date.toISOString()
+        : values.date;
       const payload: EntityFormValues = {
         ...values,
         ...(initialValues?.id ? { id: initialValues.id } : {}),
-        date: dayjs(values.date).toISOString(),
+        date: dateValue,
       };
       onSubmit(payload);
     } catch (error) {
