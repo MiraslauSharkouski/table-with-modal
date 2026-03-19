@@ -80,8 +80,8 @@ describe("Accessibility (a11y) Tests", () => {
         />,
       );
 
-      // AntD Input with allowClear should have a clear button
-      const clearButton = screen.getByRole("button", { name: /clear/i });
+      // AntD Input with allowClear renders a clear button
+      const clearButton = screen.getByRole("button", { name: "close-circle" });
       expect(clearButton).toBeInTheDocument();
     });
   });

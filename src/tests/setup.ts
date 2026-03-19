@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
-import "antd/dist/reset.css";
 
 // Mock crypto.randomUUID
 if (!globalThis.crypto) {
@@ -21,5 +20,20 @@ Object.defineProperty(window, "matchMedia", {
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
+  })),
+});
+
+// Mock ResizeObserver for AntD
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock getComputedStyle for AntD
+Object.defineProperty(window, "getComputedStyle", {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    getPropertyValue: vi.fn(),
   })),
 });

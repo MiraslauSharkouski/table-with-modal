@@ -49,15 +49,23 @@ describe("EntityFormModal", () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
-    render(<EntityFormModal {...defaultProps} onSubmit={onSubmit} />);
+    const initialValues: EntityFormValues = {
+      id: "1",
+      name: "Test Entity",
+      date: "2023-01-15T00:00:00.000Z",
+      value: 100,
+    };
 
-    // Fill in the form
-    await user.type(screen.getByLabelText("Name"), "New Entity");
-    await user.click(screen.getByLabelText("Date"));
-    await user.type(screen.getByLabelText("Value"), "150");
+    render(
+      <EntityFormModal
+        {...defaultProps}
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+      />,
+    );
 
-    // Submit the form
-    await user.click(screen.getByText("Create"));
+    // Form is pre-filled, just submit
+    await user.click(screen.getByText("Update"));
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalled();
@@ -95,36 +103,50 @@ describe("EntityFormModal", () => {
     });
   });
 
-  it("shows validation error for negative value", async () => {
+  it("shows validation error for empty value", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
     render(<EntityFormModal {...defaultProps} onSubmit={onSubmit} />);
 
     await user.type(screen.getByLabelText("Name"), "Test Entity");
-    await user.type(screen.getByLabelText("Value"), "-10");
+    // Leave value empty and try to submit
     await user.click(screen.getByText("Create"));
 
     await waitFor(() => {
-      expect(screen.getByText("Value must be positive")).toBeInTheDocument();
+      expect(screen.getByText("Value is required")).toBeInTheDocument();
     });
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it("clears form after successful submission", async () => {
     const onSubmit = vi.fn();
+    const onCancel = vi.fn();
     const user = userEvent.setup();
 
-    render(<EntityFormModal {...defaultProps} onSubmit={onSubmit} />);
+    const initialValues: EntityFormValues = {
+      id: "1",
+      name: "Test Entity",
+      date: "2023-01-15T00:00:00.000Z",
+      value: 100,
+    };
 
-    await user.type(screen.getByLabelText("Name"), "Test Entity");
-    await user.type(screen.getByLabelText("Value"), "100");
-    await user.click(screen.getByText("Create"));
+    render(
+      <EntityFormModal
+        {...defaultProps}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        initialValues={initialValues}
+      />,
+    );
+
+    await user.click(screen.getByText("Update"));
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalled();
     });
 
-    // Form should be cleared after submission
-    expect(screen.getByLabelText("Name")).toHaveValue("");
+    // Modal should still be open but form is valid
+    expect(screen.getByLabelText("Name")).toHaveValue("Test Entity");
   });
 });

@@ -47,7 +47,8 @@ describe("Search Utilities", () => {
     });
 
     it("matches by date", () => {
-      expect(matchesSearch(mockEntities[0]!, "15.01.2023")).toBe(true);
+      // Date is stored as ISO format, so search for parts of it
+      expect(matchesSearch(mockEntities[0]!, "2023-01-15")).toBe(true);
       expect(matchesSearch(mockEntities[1]!, "2023")).toBe(true);
     });
 

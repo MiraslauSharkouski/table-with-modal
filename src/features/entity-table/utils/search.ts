@@ -7,6 +7,8 @@ import type { EntityItem } from "../types/entity";
 export const matchesSearch = (entity: EntityItem, query: string): boolean => {
   const q = query.toLowerCase().trim();
 
+  if (!q) return false;
+
   return (
     entity.name.toLowerCase().includes(q) ||
     entity.date.toLowerCase().includes(q) ||
