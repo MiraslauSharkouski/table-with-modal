@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
+import "antd/dist/reset.css";
 
 // Mock crypto.randomUUID
-if (!global.crypto) {
-  global.crypto = {
+if (!globalThis.crypto) {
+  globalThis.crypto = {
     randomUUID: () => "test-uuid-" + Math.random().toString(36).substr(2, 9),
   } as any;
 }

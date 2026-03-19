@@ -1,14 +1,21 @@
 import type { ReactElement } from "react";
 import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, theme } from "antd";
 
 interface AllTheProvidersProps {
   children: React.ReactNode;
 }
 
+const { defaultAlgorithm, defaultSeed } = theme;
+
+const themeConfig = {
+  algorithm: defaultAlgorithm,
+  token: defaultSeed,
+};
+
 function AllTheProviders({ children }: AllTheProvidersProps) {
-  return <ConfigProvider>{children}</ConfigProvider>;
+  return <ConfigProvider theme={themeConfig}>{children}</ConfigProvider>;
 }
 
 function customRender(
