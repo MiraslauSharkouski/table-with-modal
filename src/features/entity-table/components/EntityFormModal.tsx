@@ -1,59 +1,57 @@
-import React from "react";
-import { Modal, Form, Input, Select, Button } from "antd";
-import type { Entity, EntityFormData } from "../types/entity";
-
-const { Option } = Select;
+import { Modal, Form, Input, InputNumber, DatePicker, Button } from "antd";
+import type { EntityItem, EntityFormValues } from "../types/entity";
+import dayjs from "dayjs";
 
 interface EntityFormModalProps {
   visible: boolean;
   onCancel: () => void;
-  onSubmit: (data: EntityFormData) => void;
-  initialValues?: Entity | null;
+  onSubmit: (data: EntityFormValues) => void;
+  initialValues?: EntityItem | null;
   loading?: boolean;
 }
 
-const EntityFormModal: React.FC<EntityFormModalProps> = ({
+const EntityFormModal = ({
   visible,
   onCancel,
   onSubmit,
   initialValues,
   loading = false,
-}) => {
-  const [form] = Form.useForm();
+}: EntityFormModalProps) => {
+  const [form] = Form.useForm<EntityFormValues>();
 
-  React.useEffect(() => {
-    if (visible) {
-      if (initialValues) {
-        form.setFieldsValue({
-          name: initialValues.name,
-          description: initialValues.description || "",
-          status: initialValues.status || "active",
-        });
-      } else {
-        form.resetFields();
-      }
-    }
-  }, [visible, initialValues, form]);
-
-  const handleSubmit = (values: EntityFormData) => {
-    onSubmit(values);
+  const handleCancel = () => {
     form.resetFields();
+    onCancel();
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const sanitizedValues = {
+        ...values,
+        date: values.date.toString(),
+      };
+      onSubmit(sanitizedValues);
+      form.resetFields();
+    } catch (error) {
+      // Validation errors are handled by AntD Form internally
+    }
   };
 
   return (
     <Modal
       title={initialValues ? "Edit Entity" : "Create New Entity"}
       open={visible}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       footer={[
-        <Button key="cancel" onClick={onCancel}>
+        <Button key="cancel" onClick={handleCancel}>
           Cancel
         </Button>,
         <Button
           key="submit"
           type="primary"
           loading={loading}
-          onClick={() => form.submit()}
+          onClick={handleSubmit}
         >
           {initialValues ? "Update" : "Create"}
         </Button>,
@@ -62,33 +60,38 @@ const EntityFormModal: React.FC<EntityFormModalProps> = ({
       <Form
         form={form}
         layout="vertical"
-        onFinish={handleSubmit}
         initialValues={{
-          name: "",
-          description: "",
-          status: "active",
+          name: initialValues?.name ?? "",
+          date: initialValues?.date ? dayjs(initialValues.date) : undefined,
+          value: initialValues?.value ?? 0,
         }}
       >
         <Form.Item
           label="Name"
           name="name"
-          rules={[{ required: true, message: "Please enter a name" }]}
+          rules={[
+            { required: true, message: "Name is required" },
+            { max: 100, message: "Name must be less than 100 characters" },
+          ]}
         >
           <Input placeholder="Enter entity name" />
         </Form.Item>
-        <Form.Item label="Description" name="description">
-          <Input.TextArea placeholder="Enter entity description" rows={4} />
+        <Form.Item
+          label="Date"
+          name="date"
+          rules={[{ required: true, message: "Date is required" }]}
+        >
+          <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
         </Form.Item>
         <Form.Item
-          label="Status"
-          name="status"
-          rules={[{ required: true, message: "Please select a status" }]}
+          label="Value"
+          name="value"
+          rules={[
+            { required: true, message: "Value is required" },
+            { type: "number", min: 0, message: "Value must be positive" },
+          ]}
         >
-          <Select placeholder="Select status">
-            <Option value="active">Active</Option>
-            <Option value="inactive">Inactive</Option>
-            <Option value="pending">Pending</Option>
-          </Select>
+          <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Form>
     </Modal>

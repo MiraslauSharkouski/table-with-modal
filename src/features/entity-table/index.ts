@@ -17,5 +17,8 @@ export type {
 } from "./types/entity";
 export { entityFormSchema } from "./types/entity";
 
+export type { EntityService } from "./services/entityService";
+export { createMockEntityService } from "./services/entityService";
+
 export { searchEntities } from "./utils/search";
 export { validateEntityForm, sanitizeEntityData } from "./utils/validation";

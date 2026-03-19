@@ -1,4 +1,3 @@
-import type { SortOrder } from "antd/es/table/interface";
 import { z } from "zod";
 
 /**
@@ -44,7 +43,7 @@ export const entityFormSchema = z.object({
 /**
  * Тип для сортировки AntD таблицы
  */
-export type { SortOrder };
+export type SortOrder = "ascend" | "descend" | undefined;
 
 /**
  * Утилитный тип для полей сущности

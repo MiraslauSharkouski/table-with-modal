@@ -1,19 +1,18 @@
-import React from "react";
 import { Input, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 interface SearchBarProps {
   onSearch: (value: string) => void;
   placeholder?: string;
-  loading?: boolean;
+  value?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
+const SearchBar = ({
   onSearch,
   placeholder = "Search...",
-  loading = false,
-}) => {
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  value = "",
+}: SearchBarProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSearch(e.target.value);
   };
 
@@ -23,7 +22,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <Input
           placeholder={placeholder}
           prefix={<SearchOutlined />}
-          onChange={handleSearch}
+          onChange={handleChange}
+          value={value}
           allowClear
           style={{ width: 300 }}
         />

@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -8,11 +7,11 @@ interface TableActionsProps {
   loading?: boolean;
 }
 
-const TableActions: React.FC<TableActionsProps> = ({
+const TableActions = ({
   onAddNew,
   extraActions,
   loading = false,
-}) => {
+}: TableActionsProps) => {
   return (
     <div style={{ marginBottom: 16 }}>
       <Space>

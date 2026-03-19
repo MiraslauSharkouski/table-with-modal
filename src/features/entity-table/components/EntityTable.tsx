@@ -1,78 +1,77 @@
-import React from "react";
 import { Table, Space, Button, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import type { SorterResult } from "antd/es/table/interface";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import type { Entity } from "../types/entity";
+import type { EntityItem, SortOrder } from "../types/entity";
+import {
+  sortByName,
+  sortByDate,
+  sortByValue,
+  sortById,
+} from "../utils/sorters";
 
 interface EntityTableProps {
-  entities: Entity[];
+  entities: EntityItem[];
   loading?: boolean;
-  onEdit: (entity: Entity) => void;
+  onEdit: (entity: EntityItem) => void;
   onDelete: (id: string) => void;
   onAddNew?: () => void;
+  onChange?: (
+    pagination: any,
+    filters: Record<string, any>,
+    sorter: SorterResult<EntityItem> | SorterResult<EntityItem>[],
+    extra?: any,
+  ) => void;
+  sortField?: keyof EntityItem | undefined;
+  sortOrder?: SortOrder;
 }
 
-const EntityTable: React.FC<EntityTableProps> = ({
+const EntityTable = ({
   entities,
   loading = false,
   onEdit,
   onDelete,
   onAddNew,
-}) => {
-  const columns: ColumnsType<Entity> = [
+  onChange = () => {},
+  sortField,
+  sortOrder,
+}: EntityTableProps) => {
+  const columns: ColumnsType<EntityItem> = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      sorter: (a: Entity, b: Entity) => a.id.localeCompare(b.id),
+      sorter: (a, b) => sortById(a, b, "asc"),
+      defaultSortOrder: null,
+      showSorterTooltip: true,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a: Entity, b: Entity) => a.name.localeCompare(b.name),
+      sorter: (a, b) => sortByName(a, b, "asc"),
+      defaultSortOrder: null,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      sorter: (a, b) => sortByDate(a, b, "asc"),
+      defaultSortOrder: null,
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: Entity["status"]) => {
-        let color = "default";
-        if (status === "active") color = "green";
-        if (status === "inactive") color = "red";
-        if (status === "pending") color = "orange";
-
-        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
-      },
-      filters: [
-        { text: "Active", value: "active" },
-        { text: "Inactive", value: "inactive" },
-        { text: "Pending", value: "pending" },
-      ],
-      onFilter: (value: unknown, record: Entity) => {
-        if (typeof value === "string") {
-          return record.status === (value as Entity["status"]);
-        }
-        return false;
-      },
-    },
-    {
-      title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (date: Date) => new Date(date).toLocaleDateString(),
-      sorter: (a: Entity, b: Entity) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+      sorter: (a, b) => sortByValue(a, b, "asc"),
+      defaultSortOrder: null,
+      render: (value: number) => value.toLocaleString(),
     },
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: Entity) => (
+      render: (_, record) => (
         <Space size="middle">
           <Button
             type="link"
@@ -108,6 +107,8 @@ const EntityTable: React.FC<EntityTableProps> = ({
         columns={columns}
         rowKey="id"
         loading={loading}
+        onChange={onChange}
+        sortDirections={["ascend", "descend"] as const}
       />
     </div>
   );

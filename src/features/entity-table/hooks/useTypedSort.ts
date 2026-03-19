@@ -9,10 +9,20 @@ export const useTypedSort = () => {
   const [sortOrder, setSortOrder] = useState<SortOrder>(undefined);
 
   const handleTableChange = useCallback(
-    (pagination: any, filters: any, sorter: SorterResult<EntityItem>) => {
-      setSortField(sorter.field as EntityField);
-      // Handle the case where sorter.order might be null by converting it to undefined
-      setSortOrder(sorter.order ?? undefined);
+    (
+      pagination: any,
+      filters: any,
+      sorter: SorterResult<EntityItem> | SorterResult<EntityItem>[],
+      extra?: any,
+    ) => {
+      const actualSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+      if (actualSorter) {
+        setSortField(actualSorter.field as EntityField);
+        // Handle the case where sorter.order might be null by converting it to undefined
+        setSortOrder(
+          actualSorter.order === null ? undefined : actualSorter.order,
+        );
+      }
     },
     [],
   );
