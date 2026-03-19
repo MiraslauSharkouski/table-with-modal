@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Modal } from "antd";
 import {
   EntityTable,
   EntityFormModal,
@@ -20,7 +21,7 @@ function App() {
   // Debounced search with 300ms delay
   const [debouncedSearchTerm, setSearchTerm] = useDebouncedSearch("", 300);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editingEntity, setEditingEntity] = useState<EntityItem | null>(null);
 
   // Filter entities using debounced search term
@@ -28,17 +29,24 @@ function App() {
 
   const handleAddNew = useCallback(() => {
     setEditingEntity(null);
-    setModalVisible(true);
+    setModalOpen(true);
   }, []);
 
   const handleEdit = useCallback((entity: EntityItem) => {
     setEditingEntity(entity);
-    setModalVisible(true);
+    setModalOpen(true);
   }, []);
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      await deleteEntity(id);
+    (id: string) => {
+      Modal.confirm({
+        title: "Delete Entity",
+        content: "Are you sure you want to delete this entity?",
+        okText: "Delete",
+        cancelText: "Cancel",
+        okButtonProps: { danger: true },
+        onOk: () => deleteEntity(id),
+      });
     },
     [deleteEntity],
   );
@@ -50,13 +58,14 @@ function App() {
       } else {
         await createEntity(data);
       }
-      setModalVisible(false);
+      setModalOpen(false);
+      setEditingEntity(null);
     },
     [editingEntity, createEntity, updateEntity],
   );
 
   const handleCancel = useCallback(() => {
-    setModalVisible(false);
+    setModalOpen(false);
     setEditingEntity(null);
   }, []);
 
@@ -84,7 +93,7 @@ function App() {
         sortOrder={sortOrder}
       />
       <EntityFormModal
-        visible={modalVisible}
+        open={modalOpen}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         initialValues={editingEntity}
