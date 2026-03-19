@@ -20,5 +20,8 @@ export { entityFormSchema } from "./types/entity";
 export type { EntityService } from "./services/entityService";
 export { createMockEntityService } from "./services/entityService";
 
+export { createColumns } from "./components/columns";
+export { getTypedSorter } from "./utils/sorters";
+
 export { searchEntities } from "./utils/search";
 export { validateEntityForm, sanitizeEntityData } from "./utils/validation";

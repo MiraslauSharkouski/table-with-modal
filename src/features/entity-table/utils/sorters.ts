@@ -1,4 +1,5 @@
 import type { EntityItem, EntityField } from "../types/entity";
+import type { CompareFn } from "antd/es/table/interface";
 
 /**
  * Utility functions for sorting entities
@@ -60,4 +61,18 @@ export const sortByField = (
   }
 
   return order === "asc" ? comparison : -comparison;
+};
+
+/**
+ * Typизированная функция сортировки для AntD Table
+ * Возвращает CompareFn для указанного поля
+ */
+export const getTypedSorter = (field: EntityField): CompareFn<EntityItem> => {
+  const sorters: Record<EntityField, CompareFn<EntityItem>> = {
+    id: (a, b) => a.id.localeCompare(b.id),
+    name: (a, b) => a.name.localeCompare(b.name, "ru"),
+    date: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    value: (a, b) => a.value - b.value,
+  };
+  return sorters[field];
 };
