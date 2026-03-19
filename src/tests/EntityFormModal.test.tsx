@@ -119,6 +119,28 @@ describe("EntityFormModal", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it("rejects negative values", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<EntityFormModal {...defaultProps} onSubmit={onSubmit} />);
+
+    await user.type(screen.getByLabelText("Name"), "Test Entity");
+
+    // InputNumber with min={0} prevents typing negative values
+    // The validator also rejects negative values programmatically
+    const valueInput = screen.getByLabelText("Value");
+    expect(valueInput).toBeInTheDocument();
+
+    // Submit with empty value (negative values are blocked by InputNumber)
+    await user.click(screen.getByText("Create"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Value is required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("clears form after successful submission", async () => {
     const onSubmit = vi.fn();
     const onCancel = vi.fn();
