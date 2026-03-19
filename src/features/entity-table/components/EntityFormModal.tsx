@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { Modal, Form, Input, InputNumber, DatePicker, Button } from "antd";
-import type { EntityItem, EntityFormValues } from "../types/entity";
-import dayjs, { Dayjs } from "dayjs";
+import type { EntityFormValues } from "../types/entity";
+import dayjs from "dayjs";
 
 interface EntityFormModalProps {
   open: boolean;
@@ -23,6 +24,20 @@ const EntityFormModal = ({
 
   const isEditMode = !!initialValues?.id;
 
+  useEffect(() => {
+    if (open) {
+      if (initialValues) {
+        form.setFieldsValue({
+          name: initialValues.name,
+          date: dayjs(initialValues.date),
+          value: initialValues.value,
+        });
+      } else {
+        form.resetFields();
+      }
+    }
+  }, [open, initialValues, form]);
+
   const handleCancel = () => {
     form.resetFields();
     onCancel();
@@ -37,7 +52,6 @@ const EntityFormModal = ({
         date: dayjs(values.date).toISOString(),
       };
       onSubmit(payload);
-      form.resetFields();
     } catch (error) {
       // AntD Form handles validation errors internally
     }
@@ -48,8 +62,8 @@ const EntityFormModal = ({
       title={title ?? (isEditMode ? "Edit Entity" : "Create New Entity")}
       open={open}
       onCancel={handleCancel}
-      destroyOnClose
-      maskClosable
+      destroyOnHidden
+      mask={{ closable: true }}
       keyboard
       footer={[
         <Button key="cancel" onClick={handleCancel}>
@@ -66,16 +80,7 @@ const EntityFormModal = ({
         </Button>,
       ]}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{
-          name: initialValues?.name ?? "",
-          date: initialValues?.date ? dayjs(initialValues.date) : undefined,
-          value: initialValues?.value ?? undefined,
-        }}
-        autoComplete="off"
-      >
+      <Form form={form} layout="vertical" autoComplete="off">
         <Form.Item
           label="Name"
           name="name"

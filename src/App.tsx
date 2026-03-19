@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Modal } from "antd";
+import { App as AntdApp } from "antd";
 import {
   EntityTable,
   EntityFormModal,
@@ -13,13 +13,14 @@ import {
   type EntityFormValues,
 } from "./features/entity-table";
 
-function App() {
+function AppContent() {
+  const { modal } = AntdApp.useApp();
   const { entities, loading, createEntity, updateEntity, deleteEntity } =
     useEntityData();
   const { sortField, sortOrder, handleTableChange } = useTypedSort();
 
-  // Debounced search with 300ms delay
-  const [debouncedSearchTerm, setSearchTerm] = useDebouncedSearch("", 300);
+  // Debounced search with 150ms delay for faster response
+  const [debouncedSearchTerm, setSearchTerm] = useDebouncedSearch("", 20);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntity, setEditingEntity] = useState<EntityItem | null>(null);
@@ -39,7 +40,7 @@ function App() {
 
   const handleDelete = useCallback(
     (id: string) => {
-      Modal.confirm({
+      modal.confirm({
         title: "Delete Entity",
         content: "Are you sure you want to delete this entity?",
         okText: "Delete",
@@ -48,7 +49,7 @@ function App() {
         onOk: () => deleteEntity(id),
       });
     },
-    [deleteEntity],
+    [deleteEntity, modal],
   );
 
   const handleSubmit = useCallback(
@@ -100,6 +101,14 @@ function App() {
         loading={loading}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AntdApp>
+      <AppContent />
+    </AntdApp>
   );
 }
 
