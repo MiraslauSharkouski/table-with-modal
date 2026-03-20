@@ -52,6 +52,8 @@ const EntityTable = ({
         onChange={onChange}
         sortDirections={["ascend", "descend"] as const}
         pagination={pagination}
+        scroll={{ y: 600 }} // Enable virtual scrolling for better performance
+        virtual // Enable virtual scrolling in Ant Design Table
       />
     </div>
   );

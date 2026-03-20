@@ -1,9 +1,8 @@
-import { useState, useCallback, useMemo } from "react";
-import { App as AntdApp } from "antd";
+import { useState, useCallback, useMemo, lazy, Suspense } from "react";
+import { App as AntdApp, Spin } from "antd";
 import dayjs from "dayjs";
 import {
   EntityTable,
-  EntityFormModal,
   SearchBar,
   TableActions,
   useEntityData,
@@ -13,6 +12,11 @@ import {
   type EntityItem,
   type EntityFormValues,
 } from "./features/entity-table";
+
+// Lazy load the modal component to reduce initial bundle size
+const EntityFormModal = lazy(
+  () => import("./features/entity-table/components/EntityFormModal"),
+);
 
 function AppContent() {
   const { modal } = AntdApp.useApp();
@@ -37,11 +41,13 @@ function AppContent() {
     setModalOpen(true);
   }, []);
 
+  // Memoize the edit handler to prevent unnecessary re-renders
   const handleEdit = useCallback((entity: EntityItem) => {
     setEditingEntity(entity);
     setModalOpen(true);
   }, []);
 
+  // Memoize the delete handler to prevent unnecessary re-renders
   const handleDelete = useCallback(
     (id: string) => {
       modal.confirm({
@@ -56,6 +62,7 @@ function AppContent() {
     [deleteEntity, modal],
   );
 
+  // Memoize the submit handler to prevent unnecessary re-renders
   const handleSubmit = useCallback(
     async (data: EntityFormValues) => {
       // Convert Dayjs date to ISO string if needed
@@ -84,16 +91,28 @@ function AppContent() {
     setSearchTerm("");
   }, [setSearchTerm]);
 
-  return (
-    <div style={{ padding: 24 }}>
-      <h1>Entity Table</h1>
-      <TableActions onAddNew={handleAddNew} loading={loading} />
+  // Memoize the table actions to prevent unnecessary re-renders
+  const tableActionsMemo = useMemo(
+    () => <TableActions onAddNew={handleAddNew} loading={loading} />,
+    [handleAddNew, loading],
+  );
+
+  // Memoize the search bar to prevent unnecessary re-renders
+  const searchBarMemo = useMemo(
+    () => (
       <SearchBar
         onSearch={setSearchTerm}
         onClear={handleClear}
         value={debouncedSearchTerm}
         placeholder="Search entities..."
       />
+    ),
+    [setSearchTerm, handleClear, debouncedSearchTerm],
+  );
+
+  // Memoize the entity table to prevent unnecessary re-renders
+  const entityTableMemo = useMemo(
+    () => (
       <EntityTable
         entities={filteredEntities}
         loading={loading}
@@ -101,13 +120,34 @@ function AppContent() {
         onDelete={handleDelete}
         onChange={handleTableChange}
       />
-      <EntityFormModal
-        open={modalOpen}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        initialValues={editingEntity}
-        loading={loading}
-      />
+    ),
+    [filteredEntities, loading, handleEdit, handleDelete, handleTableChange],
+  );
+
+  return (
+    <div style={{ padding: 24 }}>
+      <h1>Entity Table</h1>
+      {tableActionsMemo}
+      {searchBarMemo}
+      {entityTableMemo}
+      {modalOpen && (
+        <Suspense
+          fallback={
+            <Spin
+              size="large"
+              style={{ position: "absolute", top: "50%", left: "50%" }}
+            />
+          }
+        >
+          <EntityFormModal
+            open={modalOpen}
+            onCancel={handleCancel}
+            onSubmit={handleSubmit}
+            initialValues={editingEntity}
+            loading={loading}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

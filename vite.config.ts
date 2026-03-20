@@ -16,13 +16,14 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
-    sourcemap: true,
+    sourcemap: false, // Disable sourcemaps for production to reduce bundle size
+    cssCodeSplit: true, // Enable CSS code splitting
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes("node_modules")) {
-            if (id.includes("react")) {
-              return "vendor";
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react-vendor";
             }
             if (id.includes("antd") || id.includes("@ant-design")) {
               return "antd";
@@ -32,7 +33,19 @@ export default defineConfig({
             }
           }
         },
+        // Add cache busting for back/forward cache issues
+        entryFileNames: `assets/[name].[hash].js`,
+        chunkFileNames: `assets/[name].[hash].js`,
+        assetFileNames: `assets/[name].[hash].[ext]`,
       },
+    },
+    minify: "terser", // Use terser for better minification
+    cssMinify: "lightningcss", // Use lightningcss for faster CSS minification
+  },
+  // Add headers to fix back/forward cache issues
+  server: {
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate",
     },
   },
 });
