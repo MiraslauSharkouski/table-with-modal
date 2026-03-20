@@ -113,3 +113,14 @@ code {
 .p-0 {
   padding: 0 !important;
 }
+
+@media screen and (max-width: 568px) {
+  .edit-btn-text,
+  .delete-btn-text {
+    display: none;
+  }
+
+  .ant-table-cell {
+    padding: 10px !important;
+  }
+}

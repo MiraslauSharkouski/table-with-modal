@@ -55,7 +55,7 @@ export const createColumns = (
           onClick={() => onEdit(record)}
           className="p-0"
         >
-          Edit
+          <span className="edit-btn-text">Edit</span>
         </Button>
         <Button
           type="link"
@@ -64,7 +64,7 @@ export const createColumns = (
           onClick={() => onDelete(record.id)}
           className="p-0"
         >
-          Delete
+          <span className="delete-btn-text">Delete</span>
         </Button>
       </Space>
     ),
