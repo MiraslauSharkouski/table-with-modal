@@ -6,6 +6,7 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
+  base: "/table-with-modal",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

@@ -1,75 +1,80 @@
-# React + TypeScript + Vite
+# CRUD Table Component with AntD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Проект представляет собой компонент таблицы на стеке **React + TypeScript**, реализующий полный цикл CRUD (Create, Read, Update, Delete) операций над данными. Интерфейс построен с использованием библиотеки **Ant Design**, обеспечивающей современный UI/UX.
 
-Currently, two official plugins are available:
+## Функционал
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Таблица данных:** Отображение списка записей с колонками (Имя, Дата, Число, Действия).
+- **Добавление записи:** Модальное окно с формой валидации для создания новой строки.
+- **Редактирование:** Обновление существующей записи через то же модальное окно с предзаполненными данными.
+- **Удаление:** Удаление строки с подтверждением действия.
+- **Сортировка:** Кликабельные заголовки колонок с правильной сортировкой для разных типов данных (строки, числа, даты).
+- **Поиск:** Глобальный поиск по всем ячейкам таблицы в реальном времени.
+- **Валидация:** Проверка заполненности и корректности данных в форме.
 
-## React Compiler
+## Стек технологий
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Сборка:** [Vite](https://vitejs.dev/)
+- **Язык:** [TypeScript](https://www.typescriptlang.org/)
+- **UI Framework:** [Ant Design (v5)](https://ant.design/)
+- **Реактивность:** [React](https://react.dev/) (с поддержкой **React Compiler**)
+- **Утилиты:** [Lodash](https://lodash.com/) (для оптимизации поиска)
+- **Иконки:** [@ant-design/icons](https://icons.ant.design/)
+- **Дата:** [Dayjs](https://day.js.org/) (стандарт для работы с датами в AntD)
 
-Note: This will impact Vite dev & build performances.
+## Установка
 
-## Expanding the ESLint configuration
+1. Клонируйте репозиторий:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   ```bash
+   git clone https://MiraslauSharkouski.github.io/table-with-modal
+   cd table-with-modal
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. Установите зависимости:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   ```bash
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. Запустите проект в режиме разработки:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   ```bash
+   npm run dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4. Откройте браузер по адресу, указанному в терминале (обычно `http://localhost:5173`).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Использование
+
+### Работа с таблицей
+
+1. **Просмотр:** Данные отображаются в виде списка. По умолчанию сортировка отсутствует.
+2. **Сортировка:** Нажмите на заголовок колонки (например, "Дата" или "Число"), чтобы отсортировать данные по возрастанию или убыванию.
+3. **Поиск:** Введите текст в поле поиска над таблицей. Таблица отфильтрует строки, где значение ячейки содержит введенный текст (регистронезависимо).
+
+### Управление записями
+
+- **Добавить:** Нажмите кнопку **"Добавить"** справа над таблицей. Заполните форму в модальном окне и нажмите "ОК".
+- **Редактировать:** Нажмите на иконку ✏️ (карандаш) в колонке "Действия" у нужной строки. Измените данные в форме и сохраните.
+- **Удалить:** Нажмите на иконку 🗑️ (корзина) в колонке "Действия". Подтвердите удаление во всплывающем окне.
+
+## Скрипты
+
+| Команда           | Описание                      |
+| :---------------- | :---------------------------- |
+| `npm run dev`     | Запуск сервера разработки     |
+| `npm run build`   | Сборка проекта для продакшена |
+| `npm run preview` | Предпросмотр продакшен сборки |
+| `npm run lint`    | Проверка кода линтером        |
+
+## Особенности реализации
+
+- **React Compiler:** Проект настроен на использование нового компилятора React для автоматической мемизации компонентов.
+- **Типизация:** Все данные и пропсы строго типизированы через TypeScript.
+- **Производительность:** Поиск реализован с учетом производительности (возможно использование `debounce` через lodash).
+- **UX:** Использованы стандартные паттерны AntD (Popconfirm для удаления, Message для уведомлений об успехе/ошибке).
+
+## Лицензия
+
+MIT
